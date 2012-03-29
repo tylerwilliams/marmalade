@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-"""
-Copyright (c) 2010 The Echo Nest. All rights reserved.
-Created by Tyler Williams on 2010-04-25.
-
-Utility functions to support the Echo Nest web API interface.
-"""
 import urllib
 import urllib2
 import config
