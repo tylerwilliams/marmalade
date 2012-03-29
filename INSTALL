@@ -1,0 +1,5 @@
+As per usual python routine, the following should get you setup:
+
+	$ python setup.py build
+	$ python setup.py install
+
