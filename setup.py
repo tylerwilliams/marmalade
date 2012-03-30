@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-__version__ = "1000001"
+__version__ = "1000002"
 
 # $Source$
 from sys import version

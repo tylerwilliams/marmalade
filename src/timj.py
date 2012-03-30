@@ -104,22 +104,26 @@ class TIMJUser(proxies.UserProxy):
             key = 'avatarSmall'
         return self._get_simple_attribute(key)
             
-    def _get_friends_and_idols(self, person_type, results):
+    def _get_friends_and_idols(self, person_type, results, sort=None):
         assert person_type in ('followers', 'following')
-        friends_and_idols = self._get_listed_things(person_type, 'people', results)
+        paramd = {}
+        if sort:
+            assert sort in ('when', 'likes', 'alpha')
+            paramd['order'] = sort
+        friends_and_idols = self._get_listed_things(person_type, 'people', results, **paramd)
         return [TIMJUser(**util.fix(raw_person)) for raw_person in friends_and_idols]
 
     def get_num_followers(self):
         return self._get_simple_attribute('followersCount')
 
-    def get_followers(self, results=10):
-        return self._get_friends_and_idols('followers', results)
+    def get_followers(self, results=10, sort=None):
+        return self._get_friends_and_idols('followers', results, sort=sort)
 
     def get_num_followees(self):
         return self._get_simple_attribute('followingCount')
 
-    def get_followees(self, results=10):
-        return self._get_friends_and_idols('following', results)
+    def get_followees(self, results=10, sort=None):
+        return self._get_friends_and_idols('following', results, sort=sort)
 
     def get_full_name(self):
         return self._get_simple_attribute('fullname')

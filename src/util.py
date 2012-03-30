@@ -1,23 +1,30 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import gzip
+import time
+import socket
 import urllib
 import urllib2
-import config
 import logging
-import socket
-import time
+import StringIO
+import threading
 import traceback
 
 try:
-    import simplejson as json    
+    import simplejson as json
 except ImportError:
     import json
+
+import config
 
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(message)s")
 logger = logging.getLogger("marmalade")
 
-headers = [('User-Agent', '%s %s' % (config.__version__, config.USER_AGENT))]
+headers = [
+    ('User-Agent', '%s %s' % (config.__version__, config.USER_AGENT)),
+    ('Accept-encoding', 'gzip'),
+]
 
 class MyBaseHandler(urllib2.BaseHandler):
     def default_open(self, request):
@@ -25,7 +32,7 @@ class MyBaseHandler(urllib2.BaseHandler):
             logger.info("%s" % (request.get_full_url(),))
         request.start_time = time.time()
         return None
-        
+
 class MyErrorProcessor(urllib2.HTTPErrorProcessor):
     def http_response(self, request, response):
         code = response.code
@@ -36,10 +43,16 @@ class MyErrorProcessor(urllib2.HTTPErrorProcessor):
         else:
             urllib2.HTTPErrorProcessor.http_response(self, request, response)
 
-opener = urllib2.build_opener(MyBaseHandler(), MyErrorProcessor())
-opener.addheaders = headers
+l = threading.local()
+l.opener = None
 
-def get_successful_response(f_obj):    
+def decode_response(f_obj):
+    if f_obj.info().get('Content-Encoding') == 'gzip':
+        buf = StringIO.StringIO(f_obj.read())
+        f_obj = gzip.GzipFile(fileobj=buf)
+    return f_obj
+
+def get_successful_response(f_obj):
     if hasattr(f_obj,'headers'):
         response_headers = f_obj.headers
     else:
@@ -52,19 +65,24 @@ def get_successful_response(f_obj):
         logger.debug(traceback.format_exc())
         raise Exception("Unknown error.", response_headers)
 
-
 def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
     """
-    Call the api! 
+    Call the api!
     Param_dict is a *regular* *python* *dictionary* so if you want to have multi-valued params
     put them in a list.
-    
+
     ** note, if we require 2.6, we can get rid of this timeout munging.
     """
+    global l
+    if not l.opener:
+        opener = urllib2.build_opener(MyBaseHandler(), MyErrorProcessor())
+        opener.addheaders = headers
+        l.opener = opener
+
     param_list = []
     if not socket_timeout:
         socket_timeout = config.CALL_TIMEOUT
-    
+
     for key,val in param_dict.iteritems():
         if isinstance(val, list):
             param_list.extend( [(key,subval) for subval in val] )
@@ -74,7 +92,7 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
             param_list.append( (key,val) )
 
     params = urllib.urlencode(param_list)
-    
+
     orig_timeout = socket.getdefaulttimeout()
     socket.setdefaulttimeout(socket_timeout)
 
@@ -83,24 +101,24 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
         this is a normal POST call
         """
         url = 'http://%s/%s/%s' % (config.API_HOST, config.API_VERSION, method)
-        
+
         if data is None:
             data = ''
         data = urllib.urlencode(data)
         data = "&".join([data, params])
 
-        f = opener.open(url, data=data)
+        f = l.opener.open(url, data=data)
     else:
         """
         just a normal GET call
         """
         url = 'http://%s/%s/%s?%s' % (config.API_HOST, config.API_VERSION, method, params)
 
-        f = opener.open(url)
-            
+        f = l.opener.open(url)
+
     socket.setdefaulttimeout(orig_timeout)
-    
-    # try/except
+
+    f = decode_response(f)
     response_dict = get_successful_response(f)
     return response_dict
 

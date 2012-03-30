@@ -29,9 +29,9 @@ class GenericProxy(object):
     def get_json_resource(self, *args, **kwargs):
         return get_json_resource(*args, **kwargs)
     
-    def _get_listed_things(self, attribute, response_key, results):
+    def _get_listed_things(self, attribute, response_key, results, **kwargs):
         get_function = self.get_json_user_attribute
-        return get_listed_things(get_function, attribute, response_key, results)
+        return get_listed_things(get_function, attribute, response_key, results, **kwargs)
 
 class UserProxy(GenericProxy):
     def __init__(self, name, **kwargs):

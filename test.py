@@ -1,10 +1,15 @@
 import random
+import pprint
 
 # import src as marmalade
 # from src import config
 import marmalade
 from marmalade import config
 config.TRACE_API_CALLS=True
+
+t = marmalade.TIMJUser('tylerbw')
+pprint.pprint(t.get_followees(results=-1, sort='likes'))
+pprint.pprint(t.get_followers(results=-1, sort='likes'))
 
 print marmalade.get_suggested_users(1)
 print marmalade.search_users_by_artist('beach boys', results=1)
