@@ -5,12 +5,31 @@ import datetime
 import proxies
 import util
 
+def get_suggested_users(results=10):
+    get_function = proxies.get_json_resource
+    raw = proxies.get_listed_things(get_function, "suggestedPeople", 'people', results)
+    return [TIMJUser(**util.fix(raw_person)) for raw_person in raw]
+
+def _search_users_by(by, q, results):
+    get_function = proxies.get_json_resource
+    raw = proxies.get_listed_things(get_function, "search/person", 'people', results, by=by, q=q)
+    return [TIMJUser(**util.fix(raw_person)) for raw_person in raw]
+
+def search_users_by_artist(artist_q, results=10):
+    return _search_users_by('artist', artist_q, results)
+
+def search_users_by_name(user_name, results=10):
+    return _search_users_by('name', user_name, results)
+
+def search_users_by_track(track_name, results=10):
+    return _search_users_by('track', track_name, results)
+
 class Jam(proxies.JamProxy):
     def __init__(self, id, **kwargs):
         super(Jam, self).__init__(id, **kwargs)
 
     """
-        Yay docs.
+        Jam
     """
     
     def get_artist(self):
@@ -67,7 +86,7 @@ class TIMJUser(proxies.UserProxy):
         super(TIMJUser, self).__init__(name, **kwargs)
 
     """
-        Yay docs.
+        This Is My Jam User
     """
 
     def get_bio(self):

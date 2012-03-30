@@ -1,8 +1,15 @@
 import random
 
+# import src as marmalade
+# from src import config
 import marmalade
 from marmalade import config
-# config.TRACE_API_CALLS=True
+config.TRACE_API_CALLS=True
+
+print marmalade.get_suggested_users(1)
+print marmalade.search_users_by_artist('beach boys', results=1)
+print marmalade.search_users_by_name('andreas', results=-1)
+print marmalade.search_users_by_track('Neil Young | Wonderin\'')
 
 def random_walk(user, steps):
     followers = user.get_followers()
@@ -56,6 +63,6 @@ for follower in t.get_followers(-1):
 
 print "most liked jam was: %s, jammed by %s on %s (%s)\n" % (most_popular_jam,
                                                             most_popular_jam.get_user(),
-                                                            most_popular_jam.get_creation_date(), 
+                                                            most_popular_jam.get_creation_date(),
                                                             most_popular_jam.get_url())
 print random_walk(t,5)

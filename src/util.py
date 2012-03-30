@@ -14,8 +14,8 @@ try:
 except ImportError:
     import json
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(message)s")
+logger = logging.getLogger("marmalade")
 
 headers = [('User-Agent', '%s %s' % (config.__version__, config.USER_AGENT))]
 
@@ -41,16 +41,16 @@ opener.addheaders = headers
 
 def get_successful_response(f_obj):    
     if hasattr(f_obj,'headers'):
-        headers = f_obj.headers
+        response_headers = f_obj.headers
     else:
-        headers = {'Headers':'No Headers'}
+        response_headers = {'Headers':'No Headers'}
     raw_json = f_obj.read()
     try:
         response_dict = json.loads(raw_json)
         return response_dict
     except ValueError:
         logger.debug(traceback.format_exc())
-        raise Exception("Unknown error.",headers)
+        raise Exception("Unknown error.", response_headers)
 
 
 def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
@@ -82,8 +82,7 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
         """
         this is a normal POST call
         """
-        url = 'http://%s/%s/%s/%s' % (config.API_HOST, config.API_SELECTOR, 
-                                    config.API_VERSION, method)
+        url = 'http://%s/%s/%s' % (config.API_HOST, config.API_VERSION, method)
         
         if data is None:
             data = ''
@@ -95,7 +94,7 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
         """
         just a normal GET call
         """
-        url = 'http://%s/%s?%s' % (config.API_HOST, method, params)
+        url = 'http://%s/%s/%s?%s' % (config.API_HOST, config.API_VERSION, method, params)
 
         f = opener.open(url)
             

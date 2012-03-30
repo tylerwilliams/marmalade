@@ -12,4 +12,4 @@ API_HOST = 'api.thisismyjam.com'
 USER_AGENT = 'marmalade'
 TRACE_API_CALLS = False
 CALL_TIMEOUT = 10
-
+API_VERSION = 1
