@@ -12,15 +12,18 @@ def get_listed_things(get_function, attribute, response_key, results, **kwargs):
         # hopefully you don't have more followers than this....
         # i'm looking at you wil wheaton
         results = int(1e4)
-    things = []
-    num_pages = max(results/10, 1)
-    for page_num in xrange(num_pages):
-        raw = get_function(attribute, page=page_num+1, **kwargs)
-        page_things = raw[response_key]
-        if not page_things:
-            break
-        things += page_things
-    return things[:results]
+    num_fetched = 0
+    has_more_pages = True
+    current_page = None
+    page_number = 0
+    while num_fetched < results and (has_more_pages or current_page):
+        if not current_page:
+            raw = get_function(attribute, page=page_number+1, **kwargs)
+            current_page = raw[response_key]
+            has_more_pages = raw['list']['hasMore']
+            page_number += 1
+            continue
+        yield current_page.pop(0)
         
 class GenericProxy(object):
     def __init__(self):

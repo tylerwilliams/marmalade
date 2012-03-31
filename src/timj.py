@@ -21,8 +21,9 @@ def search_users_by_artist(artist_q, results=10):
 def search_users_by_name(user_name, results=10):
     return _search_users_by('name', user_name, results)
 
-def search_users_by_track(track_name, results=10):
-    return _search_users_by('track', track_name, results)
+def search_users_by_track(artist_name, track_name, results=10):
+    combined = "%s|%s" % (artist_name, track_name)
+    return _search_users_by('track', combined, results)
 
 class Jam(proxies.JamProxy):
     def __init__(self, id, **kwargs):
@@ -31,7 +32,14 @@ class Jam(proxies.JamProxy):
     """
         Jam
     """
-    
+    @classmethod
+    def from_user(cls, username):
+        raw_jam = proxies.get_json_resource(username).get('jam')
+        if raw_jam:
+            return cls(**util.fix(raw_jam))
+        else:
+            return None
+
     def get_artist(self):
         return self._get_simple_attribute('artist')
     

@@ -10,15 +10,15 @@ config.TRACE_API_CALLS=True
 t = marmalade.TIMJUser('tylerbw')
 pprint.pprint(t.get_followees(results=-1, sort='likes'))
 pprint.pprint(t.get_followers(results=-1, sort='likes'))
-
+# 
 print marmalade.get_suggested_users(1)
 print marmalade.search_users_by_artist('beach boys', results=1)
 print marmalade.search_users_by_name('andreas', results=-1)
-print marmalade.search_users_by_track('Neil Young | Wonderin\'')
+print marmalade.search_users_by_track('lana del rey', 'video games')
 
 def random_walk(user, steps):
     followers = user.get_followers()
-    for i in xrange(steps):
+    for _ in xrange(steps):
         new_user = random.choice(followers)
         print "%s follows %s" % (new_user, user)
         user = new_user
@@ -70,4 +70,4 @@ print "most liked jam was: %s, jammed by %s on %s (%s)\n" % (most_popular_jam,
                                                             most_popular_jam.get_user(),
                                                             most_popular_jam.get_creation_date(),
                                                             most_popular_jam.get_url())
-print random_walk(t,5)
+random_walk(t,5)
