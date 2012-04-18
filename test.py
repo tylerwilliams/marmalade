@@ -7,6 +7,10 @@ config.TRACE_API_CALLS=True
 
 t = marmalade.TIMJUser('tylerbw')
 
+print t.get_twitter_name()
+print t.get_lastfm_name()
+print t.get_facebook_id()
+
 pprint.pprint(t.get_followees(results=-1, sort='likes'))
 pprint.pprint(t.get_followers(results=-1, sort='likes'))
 # 
@@ -65,6 +69,7 @@ print j.get_user()
 print j.get_jamvatar('small')
 print j.get_jamvatar('medium')
 print j.get_jamvatar('large')
+print j.get_expiration_date()
 
 print "here is what your followers are liking:"
 most_popular_jam = None

@@ -50,9 +50,13 @@ class Jam(proxies.JamProxy):
         return self._get_simple_attribute('caption')
     
     def get_creation_date(self):
-        joined_on = self._get_simple_attribute('creationDate')
-        return datetime.datetime.strptime(joined_on, "%a, %d %b %Y %H:%M:%S +0000")
-    
+        creation_date = self._get_simple_attribute('creationDate')
+        return datetime.datetime.strptime(creation_date, "%a, %d %b %Y %H:%M:%S +0000")
+
+    def get_expiration_date(self):
+        end_date = self._get_simple_attribute('endDate')
+        return datetime.datetime.strptime(end_date, "%a, %d %b %Y %H:%M:%S +0000")
+
     def is_current_jam_for_user(self):
         return bool(self._get_simple_attribute('current'))
     
@@ -136,6 +140,15 @@ class TIMJUser(proxies.UserProxy):
     def get_full_name(self):
         return self._get_simple_attribute('fullname')
     
+    def get_twitter_name(self):
+        return self._get_simple_attribute('twitterName')
+            
+    def get_lastfm_name(self):
+        return self._get_simple_attribute('lastfmName')
+            
+    def get_facebook_id(self):
+        return self._get_simple_attribute('facebookID')
+            
     def get_num_jams(self):
         return self._get_simple_attribute('jamCount')
     

@@ -2,12 +2,13 @@
 # encoding: utf-8
 import os
 import sys
+import warnings
 import pkg_resources
 
 try:
     __version__ = pkg_resources.require("marmalade")[0].version
 except pkg_resources.DistributionNotFound:
-    __version__ = "0.0.0"
+    __version__ = "0.0.0" # no version--maybe pkg is not installed
 
 TIMJ_API_KEY = None
 API_HOST = 'api.thisismyjam.com'
@@ -20,3 +21,6 @@ envkeys = ["TIMJ_API_KEY"]
 this_module = sys.modules[__name__]
 for key in envkeys:
     setattr(this_module, key, os.environ.get(key, None))
+
+if not TIMJ_API_KEY:
+    warnings.warn("TIMJ_API_KEY is not set!")
