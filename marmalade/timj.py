@@ -120,7 +120,7 @@ class TIMJUser(proxies.UserProxy):
         assert person_type in ('followers', 'following')
         paramd = {}
         if sort:
-            assert sort in ('when', 'likes', 'alpha')
+            assert sort in ('when', 'affinity', 'alpha')
             paramd['order'] = sort
         friends_and_idols = self._get_listed_things(person_type, 'people', results, **paramd)
         return [TIMJUser(**util.fix(raw_person)) for raw_person in friends_and_idols]

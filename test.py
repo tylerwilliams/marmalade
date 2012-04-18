@@ -11,9 +11,9 @@ print t.get_twitter_name()
 print t.get_lastfm_name()
 print t.get_facebook_id()
 
-pprint.pprint(t.get_followees(results=-1, sort='likes'))
-pprint.pprint(t.get_followers(results=-1, sort='likes'))
-# 
+pprint.pprint(t.get_followees(results=-1, sort='affinity'))
+pprint.pprint(t.get_followers(results=-1, sort='affinity'))
+
 print marmalade.get_suggested_users(1)
 print marmalade.search_users_by_artist('beach boys', results=1)
 print marmalade.search_users_by_name('andreas', results=-1)

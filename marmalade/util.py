@@ -17,9 +17,12 @@ except ImportError:
     import json
 
 import config
+import timj_exceptions
 
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(message)s")
 logger = logging.getLogger("marmalade")
+l = threading.local()
+l.opener = None
 
 headers = [
     ('User-Agent', '%s %s' % (config.__version__, config.USER_AGENT)),
@@ -43,27 +46,23 @@ class MyErrorProcessor(urllib2.HTTPErrorProcessor):
         else:
             urllib2.HTTPErrorProcessor.http_response(self, request, response)
 
-l = threading.local()
-l.opener = None
-
 def decode_response(f_obj):
     if f_obj.info().get('Content-Encoding') == 'gzip':
         buf = StringIO.StringIO(f_obj.read())
         f_obj = gzip.GzipFile(fileobj=buf)
     return f_obj
 
-def get_successful_response(f_obj):
-    if hasattr(f_obj,'headers'):
-        response_headers = f_obj.headers
-    else:
-        response_headers = {'Headers':'No Headers'}
+def get_successful_response(f_obj, response_code, response_headers):
+    response_headers = response_headers or {'Headers':'No Headers'}
     raw_json = f_obj.read()
     try:
         response_dict = json.loads(raw_json)
+        if 400 <= response_code < 500:
+            raise timj_exceptions.TIMJAPIError(response_dict['message'], response_headers)
         return response_dict
     except ValueError:
         logger.debug(traceback.format_exc())
-        raise Exception("Unknown error.", response_headers)
+        raise timj_exceptions.TIMJAPIError("Unknown error.", response_headers)
 
 def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
     """
@@ -118,9 +117,11 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
         f = l.opener.open(url)
 
     socket.setdefaulttimeout(orig_timeout)
-
+    response_code = f.getcode()
+    response_headers = dict(f.headers)
+    
     f = decode_response(f)
-    response_dict = get_successful_response(f)
+    response_dict = get_successful_response(f, response_code, headers)
     return response_dict
 
 def fix(x):
