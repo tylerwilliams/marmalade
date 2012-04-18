@@ -9,7 +9,6 @@ import urllib2
 import logging
 import StringIO
 import threading
-import traceback
 
 try:
     import simplejson as json
@@ -41,7 +40,7 @@ class MyErrorProcessor(urllib2.HTTPErrorProcessor):
         code = response.code
         if config.TRACE_API_CALLS:
             logger.info("took %2.2fs: (%i)" % (time.time()-request.start_time,code))
-        if code in [200, 400, 401, 403, 500]:
+        if code in [200, 400, 401, 403, 404, 500]:
             return response
         else:
             urllib2.HTTPErrorProcessor.http_response(self, request, response)
@@ -58,10 +57,10 @@ def get_successful_response(f_obj, response_code, response_headers):
     try:
         response_dict = json.loads(raw_json)
         if 400 <= response_code < 500:
-            raise timj_exceptions.TIMJAPIError(response_dict['message'], response_headers)
+            raise timj_exceptions.TIMJAPIError(response_dict['message'] or response_dict['text'], response_headers)
         return response_dict
     except ValueError:
-        logger.debug(traceback.format_exc())
+        logger.exception()
         raise timj_exceptions.TIMJAPIError("Unknown error.", response_headers)
 
 def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
@@ -119,9 +118,9 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
     socket.setdefaulttimeout(orig_timeout)
     response_code = f.getcode()
     response_headers = dict(f.headers)
-    
+
     f = decode_response(f)
-    response_dict = get_successful_response(f, response_code, headers)
+    response_dict = get_successful_response(f, response_code, response_headers)
     return response_dict
 
 def fix(x):

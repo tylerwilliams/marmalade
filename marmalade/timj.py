@@ -166,6 +166,9 @@ class TIMJUser(proxies.UserProxy):
         else:
             return None
     
+    def has_current_jam(self):
+        return bool(self._get_simple_attribute('hasCurrentJam'))
+    
     def get_jams(self, results=10):
         raw_jams = self._get_listed_things('jams', 'jams', results)
         return [Jam(**util.fix(raw_jam)) for raw_jam in raw_jams]

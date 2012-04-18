@@ -3,13 +3,14 @@ import pprint
 
 import marmalade
 from marmalade import config
-config.TRACE_API_CALLS=True
+config.TRACE_API_CALLS=False
 
 t = marmalade.TIMJUser('tylerbw')
 
 print t.get_twitter_name()
 print t.get_lastfm_name()
 print t.get_facebook_id()
+print t.has_current_jam()
 
 pprint.pprint(t.get_followees(results=-1, sort='affinity'))
 pprint.pprint(t.get_followers(results=-1, sort='affinity'))
@@ -64,6 +65,7 @@ print j.get_artist()
 print j.get_title()
 print j.get_caption()
 print j.get_creation_date()
+print j.get_expiration_date()
 print j.is_current_jam_for_user()
 print j.get_user()
 print j.get_jamvatar('small')
