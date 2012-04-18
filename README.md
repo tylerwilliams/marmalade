@@ -43,3 +43,9 @@
             followers = user.get_followers()
 
     print " ==> ".join(u.id for u in random_walk_generator(me, 4))
+
+
+## YUM
+![alt text](https://raw.github.com/tylerwilliams/marmalade/master/marmalade.jpg "mmmmm (from: http://www.flickr.com/photos/wendycopley/4451578552/sizes/n/in/photostream/)")
+
+    
