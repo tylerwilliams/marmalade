@@ -1,13 +1,12 @@
 import random
 import pprint
 
-# import src as marmalade
-# from src import config
 import marmalade
 from marmalade import config
 config.TRACE_API_CALLS=True
 
 t = marmalade.TIMJUser('tylerbw')
+
 pprint.pprint(t.get_followees(results=-1, sort='likes'))
 pprint.pprint(t.get_followers(results=-1, sort='likes'))
 # 
@@ -42,6 +41,19 @@ print t.get_current_jam()
 print t.get_liked_jams()
 
 j = marmalade.Jam('wuqexy')
+print j
+print j.get_likes(-1)
+print j.get_artist()
+print j.get_title()
+print j.get_caption()
+print j.get_creation_date()
+print j.is_current_jam_for_user()
+print j.get_user()
+print j.get_jamvatar('small')
+print j.get_jamvatar('medium')
+print j.get_jamvatar('large')
+
+j = marmalade.Jam.from_user('tylerbw')
 print j
 print j.get_likes(-1)
 print j.get_artist()

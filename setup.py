@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-__version__ = "1000002"
+__version__ = "1.0.6"
 
 # $Source$
 from sys import version
@@ -30,7 +30,7 @@ setup(
     maintainer_email='williams.tyler@gmail.com',
     url='https://github.com/echonest/marmalade',
     download_url='https://github.com/echonest/marmalade',
-    package_dir={'marmalade':'src'},
+    package_dir={'marmalade':'marmalade'},
     packages=['marmalade'],
     requires=requires
 )

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
+import os
+import sys
 import pkg_resources
 
 try:
@@ -7,8 +9,14 @@ try:
 except pkg_resources.DistributionNotFound:
     __version__ = "0.0.0"
 
+TIMJ_API_KEY = None
 API_HOST = 'api.thisismyjam.com'
-USER_AGENT = 'marmalade'
+USER_AGENT = 'marmalade - %s' % __version__
+API_VERSION = 1
 TRACE_API_CALLS = False
 CALL_TIMEOUT = 10
-API_VERSION = 1
+
+envkeys = ["TIMJ_API_KEY"]
+this_module = sys.modules[__name__]
+for key in envkeys:
+    setattr(this_module, key, os.environ.get(key, None))

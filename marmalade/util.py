@@ -79,6 +79,7 @@ def callm(method, param_dict, POST=False, socket_timeout=None, data=None):
         opener.addheaders = headers
         l.opener = opener
 
+    param_dict['key'] = config.TIMJ_API_KEY
     param_list = []
     if not socket_timeout:
         socket_timeout = config.CALL_TIMEOUT
