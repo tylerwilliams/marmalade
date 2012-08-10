@@ -25,6 +25,10 @@ def search_users_by_track(artist_name, track_name, results=10):
     combined = "%s|%s" % (artist_name, track_name)
     return _search_users_by('track', combined, results)
 
+def get_random_user():
+    profile = proxies.get_json_resource('random')
+    return TIMJUser(**profile['person'])
+
 class Jam(proxies.JamProxy):
     def __init__(self, id, **kwargs):
         super(Jam, self).__init__(id, **kwargs)
